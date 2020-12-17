@@ -2,7 +2,8 @@
 # Apache License v2.0
 # FROM iwaseyusuke/mininet
 # Run command
-
+# 
+# 	-v :/root/topo.xml
 
 FROM ubuntu:20.04
 
@@ -10,7 +11,8 @@ USER root
 WORKDIR /root
 
 #our entrypoint.sh should take an XML file and use that to instantiate mininet
-COPY entrypoint.sh /root
+#COPY entrypoint.sh /root
+
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
@@ -20,13 +22,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     net-tools \
     openvswitch-switch \
     openvswitch-testcontroller \
+    git \
 #    tcpdump \
 #    vim \
 #    x11-xserver-utils \
 #    xterm \
- && rm -rf /var/lib/apt/lists/* \
- && chmod +x /root/entrypoint.sh
+ && rm -rf /var/lib/apt/lists/* 
+# && chmod +x /root/entrypoint.sh
+
+RUN git clone https://github.com/Project-Reclass/toynet-mininet.git && chmod +x /root/toynet-mininet/entrypoint.sh
 
 #EXPOSE 6633 6653 6640
 
-ENTRYPOINT ["/root/entrypoint.sh"]
+ENTRYPOINT ["/root/toynet-mininet/entrypoint.sh"]
