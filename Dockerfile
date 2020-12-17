@@ -16,6 +16,7 @@ WORKDIR /root
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
+    ca-certificates \
     iproute2 \
     iputils-ping \
     mininet \
@@ -30,7 +31,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
  && rm -rf /var/lib/apt/lists/* 
 # && chmod +x /root/entrypoint.sh
 
-RUN git clone https://github.com/Project-Reclass/toynet-mininet.git && chmod +x /root/toynet-mininet/entrypoint.sh
+RUN git clone https://github.com/Project-Reclass/toynet-mininet.git && cd toynet-mininet && git submodule init && chmod +x /root/toynet-mininet/entrypoint.sh
+
+WORKDIR /root/toynet-mininet
 
 #EXPOSE 6633 6653 6640
 
