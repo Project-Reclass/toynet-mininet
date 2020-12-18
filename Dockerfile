@@ -3,7 +3,7 @@
 # FROM iwaseyusuke/mininet
 # Run command
 # 
-# 	-v :/root/topo.xml
+# 	-v <XML File Path>:/root/toynet-mininet/topo.xml #mounts the <XML File Path> to /root/toynet-mininet/topo.xml on the container
 
 FROM ubuntu:20.04
 
