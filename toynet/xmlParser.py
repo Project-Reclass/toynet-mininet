@@ -151,7 +151,7 @@ def parseXML(filename: str) -> ToyTopoConfig:
     try:
         XMLconfigurations:ElementTree = ElementTree.parse(filename).getroot()  
         root:str = XMLconfigurations.find('root').text
-    except e:
+    except Exception as e:
         raise XMLParseError('error parsing ElementTree object: ' + str(e), filename)
 
     XMLrouterList:ElementTree.ElementTree = XMLconfigurations.find('routerList')
