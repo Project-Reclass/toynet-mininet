@@ -138,33 +138,54 @@ class ToyTopoConfig():
         self.hosts:List[HostConfig] = hosts
         self.links:List[Tuple[InterfaceConfig, InterfaceConfig]] = links
     
+def parseXMLContent(filecontent:str) -> ToyTopoConfig:
+    """Calls parseXML to take an XML string and convert to a ToyTopoConfig
 
-def parseXML(filename: str) -> ToyTopoConfig:
-    """Converts XML structure in provided fiel into a ToyTopoConfig which can
-        be processed by rest of system including ToyDiagram and Mininet
+    Raises: 
+        TypeCheckError
+    """
+    tc.inputTypeCheck(filecontent, 'filecontent', str)
+    try:
+        return parseXML(ElementTree.fromstring(filecontent))
+    except Exception as e:
+        raise XMLParseError('error parsing ElementTree object: ' + str(e), filecontent)
+
+def parseXMLFilename(filename:str) -> ToyTopoConfig:
+    """Calls parseXML to take an XML file and convert to a ToyTopoConfig
 
     Raises:
-        XMLParseError, TypeCheckError
+        TypeCheckError
     """
     tc.inputTypeCheck(filename, 'filename', str)
-
     try:
-        XMLconfigurations:ElementTree = ElementTree.parse(filename).getroot()  
-        root:str = XMLconfigurations.find('root').text
+        return parseXML(ElementTree.parse(filename).getroot())
     except Exception as e:
         raise XMLParseError('error parsing ElementTree object: ' + str(e), filename)
 
+def parseXML(XMLconfigurations:ElementTree) -> ToyTopoConfig:
+    """Converts XML structure in provided field into a ToyTopoConfig which can
+        be processed by rest of system including ToyDiagram and Mininet
+
+    Raises:
+        XMLParseError
+    """
+
+    try:
+        root:str = XMLconfigurations.find('root').text
+    except Exception as e:
+        raise XMLParseError('error parsing ElementTree object: ' + str(e))
+
     XMLrouterList:ElementTree.ElementTree = XMLconfigurations.find('routerList')
-    if XMLrouterList is None: raise XMLParseError('No routerList specified', filename)
+    if XMLrouterList is None: raise XMLParseError('No routerList specified')
 
     XMLswitchList:ElementTree.ElementTree = XMLconfigurations.find('switchList')
-    if XMLswitchList is None: raise XMLParseError('No switchList specified', filename)
+    if XMLswitchList is None: raise XMLParseError('No switchList specified')
 
     XMLhostList:ElementTree.ElementTree = XMLconfigurations.find('hostList')
-    if XMLhostList is None: raise XMLParseError('No hostList specified', filename)
+    if XMLhostList is None: raise XMLParseError('No hostList specified')
 
     XMLlinkList:ElementTree.ElementTree = XMLconfigurations.find('linkList')
-    if XMLlinkList is None: raise XMLParseError('No linkList specified', filename)
+    if XMLlinkList is None: raise XMLParseError('No linkList specified')
 
     routers:Tuple[Dict[str:RouterConfig]] = dict()
     for r in XMLrouterList.iter('router'):

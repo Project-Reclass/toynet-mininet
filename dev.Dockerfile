@@ -21,11 +21,19 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3-pip \
  && rm -rf /var/lib/apt/lists/* 
 
-RUN pip3 install mininet
+#might need to further research the differences between expose and publish
+EXPOSE 5000 
+
+RUN pip3 install flask flask_restful flask_apispec mininet
 
 WORKDIR /root/toynet-mininet
 #Docker ignore file to leave files out
 COPY . . 
 RUN chmod +x /root/toynet-mininet/entrypoint.sh
 
+
+ENV FLASK_APP=flasksrc
+ENV FLASK_ENV=development
+ENV LC_ALL=C.UTF-8
+ENV LANG=C.UTF-8
 ENTRYPOINT ["/root/toynet-mininet/entrypoint.sh"]
