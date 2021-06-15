@@ -23,9 +23,6 @@ class State():
         State.toynet_instance=instance
 
 class MiniFlaskTopo(MethodResource):
-   # toynet_instance = None
-
-    @marshal_with(MiniFlaskTopoPostReq)
     def post(self):
         try:
             req = MiniFlaskTopoPostReq().load(request.form)
@@ -34,12 +31,12 @@ class MiniFlaskTopo(MethodResource):
 
         try:
             if State.getInstance() is None:
-                State.setInstance(ToyNet(filecontent=req['topology']) )
+                State.setInstance(ToyNet(filecontent=req['topology']))
                 State.getInstance().start()
             else:
                 State.getInstance().restart(new_topology=req['topology'])
         except (XMLParseError, TypeCheckError):
-            abort(400, message='failed to parse XML topology') 
+            abort(400, message=f'failed to parse XML topology {State.getInstance()}') 
         
         return {
         }, 200

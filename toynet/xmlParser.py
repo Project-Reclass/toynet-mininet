@@ -146,9 +146,10 @@ def parseXMLContent(filecontent:str) -> ToyTopoConfig:
     """
     tc.inputTypeCheck(filecontent, 'filecontent', str)
     try:
-        return parseXML(ElementTree.fromstring(filecontent))
+        tree = ElementTree.ElementTree(ElementTree.fromstring(filecontent))
+        return parseXML(tree)
     except Exception as e:
-        raise XMLParseError('error parsing ElementTree object: ' + str(e), filecontent)
+        raise XMLStringParseError('error parsing XML object: ' + str(e), filecontent)
 
 def parseXMLFilename(filename:str) -> ToyTopoConfig:
     """Calls parseXML to take an XML file and convert to a ToyTopoConfig
@@ -160,7 +161,7 @@ def parseXMLFilename(filename:str) -> ToyTopoConfig:
     try:
         return parseXML(ElementTree.parse(filename).getroot())
     except Exception as e:
-        raise XMLParseError('error parsing ElementTree object: ' + str(e), filename)
+        raise XMLParseError('error parsing XML file: ' + str(e), filename)
 
 def parseXML(XMLconfigurations:ElementTree) -> ToyTopoConfig:
     """Converts XML structure in provided field into a ToyTopoConfig which can
