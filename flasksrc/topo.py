@@ -1,6 +1,6 @@
 from marshmallow import Schema, fields, ValidationError
 from flask_restful import abort
-from flask_apispec import marshal_with, MethodResource
+from flask_apispec import marshal_with, MethodResource, use_kwargs
 from flask import request
 from util.error import XMLParseError, TypeCheckError
 from toynet.toynet import ToyNet
@@ -8,7 +8,7 @@ from toynet.toynet import ToyNet
 
 #Schema definitions
 class MiniFlaskTopoPostReq(Schema):
-    topology = fields.Str(required=True)
+    topology = fields.Str()
 
 
 class State():
@@ -23,9 +23,11 @@ class State():
         State.toynet_instance=instance
 
 class MiniFlaskTopo(MethodResource):
-    def post(self):
+    @use_kwargs(MiniFlaskTopoPostReq)
+    def post(self, **kwargs):
         try:
-            req = MiniFlaskTopoPostReq().load(request.form)
+            req = MiniFlaskTopoPostReq().load(kwargs)
+            print(req)
         except ValidationError as e:
             abort(400, message='topology not provided')
 
