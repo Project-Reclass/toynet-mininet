@@ -3,6 +3,7 @@ from typing import Dict, Any
 from mininet.node import Node
 from mininet.topo import Topo
 
+
 from toynet.xmlParser import ToyTopoConfig
 
 # To see Routing Table on a Router: print( net[ 'r0' ].cmd( 'route' ) )

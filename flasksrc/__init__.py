@@ -27,4 +27,8 @@ def create_app():
     api.add_resource(MiniFlaskTopo, '/api/topo')
     docs.register(MiniFlaskTopo)
 
+    from .terminate import MiniFlaskTerminate
+    api.add_resource(MiniFlaskTerminate, '/api/terminate')
+    docs.register(MiniFlaskTerminate)
+
     return app
