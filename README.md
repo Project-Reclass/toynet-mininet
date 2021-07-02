@@ -21,14 +21,21 @@ run `docker run --privileged -v sample.xml:/root/toynet-mininet/topo.xml -v /lib
 And to run the development image:
 run `docker run --privileged -v sample.xml:/root/toynet-mininet/topo.xml -v /lib/modules:/lib/modules toynet-dev`
 
-# Python Library
+# Installing Dependencies
+
 This library makes some functionality of the Docker Python API more readily
 accessible for your use case. This library is intended to facilitate Flask
 managing Mininet containers local to its running instance.
 
-## Installing Dependencies
+## External Repositories
 
-Recommend first setting up a virtual environment:
+Download mininet: `git submodule update --init --recursive` 
+
+## Installing Python Dependencies
+
+If you are testing code that is managing Docker (therefore cannot be tested in
+a container: e.g. `tests/test_orchestration.py`), you can setup your virtual
+environment by:
 
 Linux / MacOS:
 ```
@@ -54,13 +61,13 @@ venv\Scripts\activate
 
 Make sure you are using Python 3.x, recommended Python 3.7. Install
 dependencies from the `requirements.txt` with:
-`pip3 install -f requirements.txt`
+`pip3 install -r requirements.txt`
 
 Run the `deactivate` command to exit the virtual environment.
 
 ## Testing
 
-Run `pytest -v` from the project root directory.
+Run `make test` from the project root directory.
 
 # Future Work
 
