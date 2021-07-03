@@ -10,7 +10,7 @@ FROM ubuntu:18.04
 USER root
 WORKDIR /root
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get update && apt-get install -y apt-transport-https && apt-get install -y --no-install-recommends \
     curl \
     ca-certificates \
     iproute2 \
@@ -19,13 +19,23 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     net-tools \
     openvswitch-switch \
     openvswitch-testcontroller \
+    gcc \
     git \
+    python3.6-dev \
     python3-pip \
  && rm -rf /var/lib/apt/lists/* 
 
-RUN pip3 install mininet
-RUN git clone https://github.com/Project-Reclass/toynet-mininet.git && cd toynet-mininet && git submodule init && chmod +x /root/toynet-mininet/entrypoint.sh
+EXPOSE 5000
+
+ENV FLASK_APP=flasksrc
+ENV FLASK_ENV=development
+ENV LC_ALL=C.UTF-8
+ENV LANG=C.UTF-8
+
+RUN git clone https://github.com/Project-Reclass/toynet-mininet.git && cd toynet-mininet && git submodule update --init --recursive && chmod +x /root/toynet-mininet/entrypoint.sh
 
 WORKDIR /root/toynet-mininet
+RUN pip3 install --upgrade setuptools
+RUN pip3 install -r requirements.txt 
 
 ENTRYPOINT ["/root/toynet-mininet/entrypoint.sh"]

@@ -23,7 +23,6 @@ RUN apt-get -y update && apt-get install -y apt-transport-https && apt-get insta
     python3-pip \
  && rm -rf /var/lib/apt/lists/* 
 
-#might need to further research the differences between expose and publish
 EXPOSE 5000 
 
 ENV FLASK_APP=flasksrc
@@ -36,6 +35,6 @@ COPY requirements.txt .
 RUN pip3 install --upgrade setuptools
 RUN pip3 install -r requirements.txt 
 COPY . . 
-RUN chmod +x /root/toynet-mininet/entrypoint.sh /root/toynet-mininet/test-entrypoint.sh
+RUN chmod +x /root/toynet-mininet/*entrypoint.sh
 
 ENTRYPOINT ["/root/toynet-mininet/entrypoint.sh"]

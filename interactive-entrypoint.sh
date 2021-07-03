@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+FILENAME=sample.xml
+
 service openvswitch-switch start
 ovs-vsctl set-manager ptcp:6640
-pytest -v --ignore tests/test_orchestration.py $1
+
+#read XML file
+python3 build_mininet.py ${FILENAME} 

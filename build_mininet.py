@@ -7,7 +7,7 @@ def run(filepath:str):
         Both use the ToyNet object's ToyTopoConfig as input.
         run script currently defaults to visualization but no iteraction if no flags set.
     """
-    toynet = ToyNet(filepath)
+    toynet = ToyNet(filename=filepath)
     toynet.interact()
 
 if __name__ == '__main__':
