@@ -31,4 +31,8 @@ def create_app():
     api.add_resource(MiniFlaskTerminate, '/api/terminate')
     docs.register(MiniFlaskTerminate)
 
+    from .command import MiniFlaskCommand
+    api.add_resource(MiniFlaskCommand, '/api/command')
+    docs.register(MiniFlaskCommand)
+
     return app
