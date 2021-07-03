@@ -26,14 +26,16 @@ RUN apt-get -y update && apt-get install -y apt-transport-https && apt-get insta
 #might need to further research the differences between expose and publish
 EXPOSE 5000 
 
-WORKDIR /root/toynet-mininet
-COPY . . 
-RUN pip3 install --upgrade setuptools
-RUN pip3 install -r requirements.txt 
-RUN chmod +x /root/toynet-mininet/entrypoint.sh /root/toynet-mininet/test-entrypoint.sh
-
 ENV FLASK_APP=flasksrc
 ENV FLASK_ENV=development
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
+
+WORKDIR /root/toynet-mininet
+COPY requirements.txt .
+RUN pip3 install --upgrade setuptools
+RUN pip3 install -r requirements.txt 
+COPY . . 
+RUN chmod +x /root/toynet-mininet/entrypoint.sh /root/toynet-mininet/test-entrypoint.sh
+
 ENTRYPOINT ["/root/toynet-mininet/entrypoint.sh"]

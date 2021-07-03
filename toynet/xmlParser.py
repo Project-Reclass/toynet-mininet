@@ -2,7 +2,7 @@ from xml.etree import ElementTree
 from typing import List, Tuple
 import functools
 
-from util.error import XMLParseError
+from util.error import XMLParseError, XMLStringParseError, XMLFileParseError
 import util.typecheck as tc
 
 class Name(str): pass

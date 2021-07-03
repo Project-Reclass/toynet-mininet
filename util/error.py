@@ -24,7 +24,7 @@ class XMLParseError(Exception):
     def __init__(self, msg: str):
         self.message = msg
 
-class XMLFileParseError(Exception):
+class XMLFileParseError(XMLParseError):
     '''Exception raised for errors parsing a network configuration from XML file
 
     Attributes
@@ -35,7 +35,7 @@ class XMLFileParseError(Exception):
     def __init__(self, msg: str, filename: str):
         self.message = msg + ' (File: ' + filename + ')'
 
-class XMLStringParseError(Exception):
+class XMLStringParseError(XMLParseError):
     '''Exception raised for errors parsing a netowrk configuration from a string representing an XML configuration
 
     Attributes

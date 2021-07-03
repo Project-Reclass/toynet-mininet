@@ -36,14 +36,16 @@ class ToyNet():
         pass
 
     def stop(self):
-        self.mininet.stop()
+        if self.mininet is not None:
+            self.mininet.stop()
 
     def restart(self, new_topology=None):
-        self.mininet.stop()
+        print(new_topology)
+        self.stop()
         if new_topology is not None:
             #can throw: XMLParseError, TypeCheckError
             self.config:ToyTopoConfig = parser.parseXMLContent(new_topology)
             self.topology = ToyTopo(self.config)
             self.mininet = Mininet(topo=self.topology)
-        self.mininet.start()
+        self.start()
 
