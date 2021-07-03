@@ -9,6 +9,15 @@ def client():
 
 def test_terminate_post(client):
     '''test terminate POST functionality'''
+    #clear system state
+    rv = client.post(
+        '/api/terminate',
+        json = {
+            'terminate': True,
+        },
+    )
+    assert rv.status_code in [200, 500]
+
     #empty, i.e. terminate not specified
     rv = client.post(
         '/api/terminate',
@@ -17,16 +26,16 @@ def test_terminate_post(client):
     )
     assert rv.status_code == 422
     
-    #validate the post terminate:True fails if state is None
+    #validate the post terminate:True does not terminate if state is None
     rv = client.post(
         '/api/terminate',
         json = {
             'terminate': True,
         },
     )
-    assert rv.status_code == 500
+    assert rv.status_code == 200
     rv_json = json.loads(rv.data.decode('utf-8'))
-    assert rv_json['message'] == 'terminate request failed'
+    assert rv_json['terminated'] == False
 
     #validate the post terminate:False succeeds if state is None
     rv = client.post(

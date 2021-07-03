@@ -4,7 +4,6 @@ from flask_apispec import marshal_with, MethodResource, use_kwargs
 from toynet.toynet import ToyNet
 from toynet.state import State
 
-
 #Schema definitions
 class MiniFlaskTerminatePostReq(Schema):
     terminate = fields.Bool(required=True)
@@ -20,18 +19,18 @@ class MiniFlaskTerminate(MethodResource):
     def post(self, **kwargs):
         try:
             req = MiniFlaskTerminatePostReq().load(kwargs)
-        except ValidationError as e: #no required fields- shouldn't get thrown
+        except ValidationError as e:
             abort(400, message='invalid terminate request')
         
         res = False
 
-        try:
-            if req['terminate']:
+        if req['terminate'] and State.getInstance() is not None:
+            try:
                 State.getInstance().stop()
                 State.setInstance(None)
                 res = True
-        except Exception as e:
-            abort(500, message='terminate request failed')
+            except Exception as e:
+                abort(500, message='terminate request failed')
 
         return {
             'terminated': res

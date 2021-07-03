@@ -9,6 +9,15 @@ def client():
 
 def test_topo_post(client):
     '''Checks the post topology functionality'''
+    #clear system state
+    rv = client.post(
+        '/api/terminate',
+        json = {
+            'terminate': True,
+        },
+    )
+    assert rv.status_code in [200, 500]
+
     #checks when no 'topology' is posted
     rv = client.post(
         '/api/topo',
