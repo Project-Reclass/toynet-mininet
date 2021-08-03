@@ -4,10 +4,12 @@ its lifecycle as well as providing a way to ensure that the system does not
 overcommit resources.
 '''
 
-import os
 import sys
 import docker
 import psutil
+
+DEV_IMAGE = 'toynet-dev'
+PROD_IMAGE = 'toynet'
 
 class ToynetManager():
     '''
@@ -18,6 +20,7 @@ class ToynetManager():
     Public methods:
         run_mininet_container
         build_mininet_container
+        import_image
     Public static methods:
         check_cpu_availability
         check_memory_availability
@@ -41,13 +44,11 @@ class ToynetManager():
         self.prod_image = None
         self.running_containers = dict()
 
-    def run_mininet_container(self, topo_file, dev=True):
+    def run_mininet_container(self, dev=True):
         '''
         Runs the specified Docker image as a container and binds the provided
         file for Toynet to parse its initial topology from.
 
-        topo_file: String - the absolute path of the Toynet topology file to
-                            map into the container
         dev: bool - True if we want to run the developer image, False for
                     production
 
@@ -55,19 +56,14 @@ class ToynetManager():
                           image is available
         '''
 
-        # Confirm the file to map exists, we assume /lib/modules exists
-        if not os.path.isfile(topo_file):
-            return ''
-
         vol = dict()
-        vol[topo_file] = {'bind': '/root/toynet-mininet/topo.xml', 'mode':'ro'}
         vol['/lib/modules'] = {'bind': '/lib/modules', 'mode':'ro'}
         image_name = ''
 
         if dev and self.dev_image is not None:
-            image_name = self.dev_image[0]
+            image_name = self.dev_image
         elif not dev and self.prod_image is not None:
-            image_name = self.prod_image[0]
+            image_name = self.prod_image
         else:
             return image_name
 
@@ -93,15 +89,41 @@ class ToynetManager():
             try:
                 self.dev_image = self.client.images.build(path='.',
                                                           dockerfile=docker_file,
-                                                          rm=True, tag='toynet-dev')
+                                                          rm=True, tag=DEV_IMAGE)[0]
             except docker.errors.APIError:
                 self.dev_image = None
                 return False
         else:
             try:
                 self.prod_image = self.client.images.build(path='.', dockerfile=docker_file,
-                                                           rm=True, tag='toynet')
+                                                           rm=True, tag=PROD_IMAGE)[0]
             except docker.errors.APIError:
+                self.prod_image = None
+                return False
+
+        return True
+
+    def import_image(self, dev=True, image_name=DEV_IMAGE):
+        '''
+        Imports the specified Toynet image from the existing Docker environment
+
+        dev: bool - True indicates to import the development image, False
+                    indicates to import the production image
+        image_name: String - indicates the image tag to import
+        '''
+
+        if dev:
+            try:
+                self.dev_image = self.client.images.get(image_name)
+
+            except (docker.errors.ImageNotFound, docker.errors.APIError):
+                self.dev_image = None
+                return False
+        else:
+            try:
+                self.prod_image = self.client.images.get(image_name)
+
+            except (docker.errors.ImageNotFound, docker.errors.APIError):
                 self.prod_image = None
                 return False
 
@@ -205,9 +227,8 @@ def main():
 
     # Run containers
     print('Running containers')
-    dev_container = test_toynet.run_mininet_container(os.path.abspath('./sample.xml'))
-    prod_container = test_toynet.run_mininet_container(os.path.abspath('./sample.xml'),
-                                                       dev=False)
+    dev_container = test_toynet.run_mininet_container()
+    prod_container = test_toynet.run_mininet_container(dev=False)
 
     # Kill the containers
     if test_toynet.kill_container(dev_container):
