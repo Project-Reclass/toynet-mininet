@@ -2,7 +2,6 @@
 Unit test suite for ToyNet Docker container orchistration utilities
 '''
 
-import os
 import pytest
 
 from toynet_manager import ToynetManager
@@ -39,31 +38,31 @@ def test_build_image(manager):
 
     # Test development image build
     assert manager.build_mininet_container()
-    assert manager.dev_image is not None and manager.dev_image[0].tags == ['toynet-dev:latest']
+    assert manager.dev_image is not None and 'toynet-dev:latest' in manager.dev_image.tags
 
     # Test production image build
     assert manager.build_mininet_container(False, 'Dockerfile')
-    assert manager.prod_image is not None and manager.prod_image[0].tags == ['toynet:latest']
+    assert manager.prod_image is not None and 'toynet:latest' in manager.prod_image.tags
 
 def test_run_container(manager):
     '''
     Test that the ToynetManager can run containers correctly
     '''
 
+    # Test invalid filename
+    no_container = manager.run_mininet_container()
+    assert no_container == '' and no_container not in manager.running_containers
+
     # Build images
     manager.build_mininet_container()
     manager.build_mininet_container(False, 'Dockerfile')
 
-    # Test invalid filename
-    no_container = manager.run_mininet_container('fake_file')
-    assert no_container == '' and no_container not in manager.running_containers
-
     # Test development container
-    dev_container = manager.run_mininet_container(os.path.abspath('./sample.xml'))
+    dev_container = manager.run_mininet_container()
     assert dev_container != '' and dev_container in manager.running_containers
 
     # Test production container
-    prod_container = manager.run_mininet_container(os.path.abspath('./sample.xml'), dev=False)
+    prod_container = manager.run_mininet_container(dev=False)
     assert prod_container != '' and prod_container in manager.running_containers
 
     # Test killing nonexistent container
@@ -72,3 +71,20 @@ def test_run_container(manager):
     # Test killing development and production containers
     assert manager.kill_container(dev_container)
     assert manager.kill_container(prod_container)
+
+def test_import_image(manager):
+    '''
+    Test that the ToynetManager can import images as directed
+    '''
+
+    # Test invalid filename
+    assert not manager.import_image(dev=False, image_name='fake_image')
+    assert manager.dev_image is None
+
+    # Test development image build
+    assert manager.import_image()
+    assert manager.dev_image is not None and 'toynet-dev:latest' in manager.dev_image.tags
+
+    # Test production image build
+    assert manager.import_image(dev=False, image_name='toynet')
+    assert manager.prod_image is not None and 'toynet:latest' in manager.prod_image.tags
