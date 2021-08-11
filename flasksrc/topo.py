@@ -8,7 +8,7 @@ from toynet.state import State
 
 #Schema definitions
 class MiniFlaskTopoPostReq(Schema):
-    topology = fields.Str(required=True)
+    topology = fields.Str()
 
 
 class MiniFlaskTopo(MethodResource):
@@ -19,12 +19,15 @@ class MiniFlaskTopo(MethodResource):
         except ValidationError as e:
             abort(400, message='topology not provided')
 
+        # Second validation after Marshmallow
+        if 'topology' not in req:
+            abort(400, message='topology not provided')
+
         try:
             if State.getInstance() is None:
                 State.setInstance(ToyNet(filecontent=req['topology']))
                 State.getInstance().start()
             else:
-                print(State.getInstance())
                 State.getInstance().restart(new_topology=req['topology'])
         except (XMLParseError, TypeCheckError):
             abort(400, message=f'failed to parse XML topology {State.getInstance()}') 

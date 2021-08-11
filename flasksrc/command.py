@@ -6,7 +6,7 @@ from toynet.state import State
 
 #Schema definitions
 class MiniFlaskCommandPostReq(Schema):
-    command = fields.String(required=True)
+    command = fields.String()
 
 
 class MiniFlaskCommandPostResp(Schema):
@@ -20,6 +20,10 @@ class MiniFlaskCommand(MethodResource):
         try:
             req = MiniFlaskCommandPostReq().load(kwargs)
         except ValidationError as e:
+            abort(400, message='invalid command request')
+
+        # Second validation outside of Marshmallow
+        if 'command' not in req:
             abort(400, message='invalid command request')
         
         res = ''

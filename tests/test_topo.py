@@ -24,7 +24,7 @@ def test_topo_post(client):
         json = {
         },
     )
-    assert rv.status_code == 422
+    assert rv.status_code == 400
     
     #checks when the topology provided is invalid and there is no current state
     rv = client.post(

@@ -24,7 +24,7 @@ def test_terminate_post(client):
         json = {
         },
     )
-    assert rv.status_code == 422
+    assert rv.status_code == 400
     
     #validate the post terminate:True does not terminate if state is None
     rv = client.post(
