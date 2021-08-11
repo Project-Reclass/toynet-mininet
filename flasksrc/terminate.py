@@ -6,7 +6,7 @@ from toynet.state import State
 
 #Schema definitions
 class MiniFlaskTerminatePostReq(Schema):
-    terminate = fields.Bool(required=True)
+    terminate = fields.Bool()
 
 
 class MiniFlaskTerminatePostResp(Schema):
@@ -20,6 +20,10 @@ class MiniFlaskTerminate(MethodResource):
         try:
             req = MiniFlaskTerminatePostReq().load(kwargs)
         except ValidationError as e:
+            abort(400, message='invalid terminate request')
+
+        # Second validation outside of Marshmallow
+        if 'terminate' not in req:
             abort(400, message='invalid terminate request')
         
         res = False
