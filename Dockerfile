@@ -35,6 +35,7 @@ ENV LANG=C.UTF-8
 RUN git clone https://github.com/Project-Reclass/toynet-mininet.git && cd toynet-mininet && git submodule update --init --recursive && chmod +x /root/toynet-mininet/entrypoint.sh
 
 WORKDIR /root/toynet-mininet
+RUN pip3 install --upgrade pip
 RUN pip3 install --upgrade setuptools
 RUN pip3 install -r requirements.txt 
 
