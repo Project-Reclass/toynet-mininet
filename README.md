@@ -1,5 +1,10 @@
 # Mininet ToyNet
 
+**Note: this repository is no longer actively maintained and its functionality
+has been incorporated into
+[toynet-flask](https://github.com/Project-Reclass/toynet-flask).**
+
+
 This module containerizes and provides interfaces for the backend of ToyNet to
 interface with the Mininet emulator implementing the topology that a user builds.
 
